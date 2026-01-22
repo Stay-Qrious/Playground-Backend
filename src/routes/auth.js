@@ -72,7 +72,10 @@ authRouter.post("/signup", async (req, res) => {
             data: {
                 firstName: newUser.firstName,
                 lastName: newUser.lastName,
-                email: newUser.email
+                photoUrl: newUser.photoUrl,
+                about: newUser.about,
+                skills: newUser.skills,
+                _id: newUser._id
             }
         });
     } catch (err) {
