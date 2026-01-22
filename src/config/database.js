@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
     try {
-        mongoose.connect('mongodb+srv://merausername:merapassword@cluster0.aplfsth.mongodb.net/devTinder');
+        mongoose.connect('mongodb+srv://abhishek_tripathi_wk:PlaygroundDbPassword@playgroundcluster.w59s6yz.mongodb.net/?appName=PlaygroundCluster');
        
     }
     catch (err) {

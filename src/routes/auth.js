@@ -43,35 +43,33 @@ authRouter.post("/login", async (req, res) => {
 
 authRouter.post("/signup", async (req, res) => {
     try {
-        //validation of data
         validateSignUpData(req);
-        // encrypt password
         const passwordHash = await bcrypt.hash(req.body.password, 10);
         const { firstName, lastName, email, age, gender, photoUrl, about, skills } = req.body;
-
-        const newUser = new User(
-            {
-                firstName,
-                lastName,
-                email,
-                password: passwordHash,
-                age,
-                gender,
-                photoUrl,
-                about,
-                skills
-            }
-        );
-        await newUser.save();
-        console.log("User created");
-        const token = newUser.getJWT();
-
+        const newUser = new User({
+            firstName,
+            lastName,
+            email,
+            password: passwordHash,
+            age,
+            gender,
+            photoUrl,
+            about,
+            skills
+        });
+        await newUser.save();       
+        const token = await newUser.getJWT();
         res.cookie("token", token);
-        res.json({ message: "User created successfully" ,data: newUser} );
-    }
-    catch (err) {
-        console.error("Error details:", err.message);
-        res.status(400).send("Error while creating user" + err.message);
+        res.json({ 
+            message: "User created successfully", 
+            data: {
+                firstName: newUser.firstName,
+                lastName: newUser.lastName,
+                email: newUser.email
+            }
+        });
+    } catch (err) {
+        res.status(400).send("Error while creating user: " + err.message);
     }
 });
 
