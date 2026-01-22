@@ -7,7 +7,7 @@ const userAuth = async (req, res, next) => {
         if (!token) {
             throw new Error("No token found");
         }
-        const { _id } = jwt.verify(token, "Devtinder@123");
+        const { _id } = jwt.verify(token, "Playground@123");
         const user = await User.findById(_id);
         if (!user) {
             throw new Error("User not found");

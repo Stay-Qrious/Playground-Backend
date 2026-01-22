@@ -2,7 +2,6 @@ const express = require("express");
 const profileRouter = express.Router();
 const passwordRouter = express.Router();
 const userAuth = require("../middleware/auth");
-const User = require("../models/user");
 const { validateProfileEditData } = require("../utils/validation");
 const bcrypt = require("bcrypt");
 
@@ -12,7 +11,19 @@ profileRouter.get("/profile/view", userAuth, async (req, res) => {
         if (!user) {
             throw new Error("User not found");
         }
-        res.send(user);
+
+        const { _id, firstName, lastName, photoUrl, about, skills } = user;
+
+        res.json({
+            message: "User profile fetched successfully", data: {
+                _id,
+                firstName,
+                lastName,
+                photoUrl,
+                about,
+                skills
+            }
+        });
     } catch (err) {
         console.error("Error details:", err.message);
         res.status(401).send("Please Login");
@@ -28,7 +39,17 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
 
         Object.keys(req.body).forEach((key) => { user[key] = req.body[key] });
         await user.save();
-        res.json({ message: `${user.firstName} ,Profile Updated Successfully `, data: user });
+        const { _id, firstName, lastName, photoUrl, about, skills } = user;
+        res.json({
+            message: `${user.firstName} ,Profile Updated Successfully `, data: {
+                _id,
+                firstName,
+                lastName,
+                photoUrl,
+                about,
+                skills
+            }
+        });
 
     } catch (err) {
         console.error("Error details:", err.message);
@@ -37,7 +58,7 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
 });
 
 passwordRouter.patch("/profile/password", userAuth, async (req, res) => {
-    console.log("Yha aaya tha");
+
     try {
         const user = req.user;
         const { password } = req.body;
@@ -47,7 +68,6 @@ passwordRouter.patch("/profile/password", userAuth, async (req, res) => {
         res.send("Password Changed Successfully");
     }
     catch (e) {
-        console.log("Theres an error " + e.message);
         res.send("Here's the error ", e.message);
     }
 

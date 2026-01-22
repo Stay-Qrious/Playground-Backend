@@ -16,21 +16,11 @@ const connectionRequestSchema = new Schema({
 connectionRequestSchema.index({ fromUserId: 1, toUserId: 1 });
 
 connectionRequestSchema.pre("save", function (next) {
-
-
-
     if ((this.fromUserId).equals(this.toUserId)) {
         throw new Error("Can't make connection with self");
-
-
     }
     next();
-}
-
-
-
-
-);
+});
 
 const ConnectionRequest = model("ConnectionRequest", connectionRequestSchema);
 module.exports = ConnectionRequest;
