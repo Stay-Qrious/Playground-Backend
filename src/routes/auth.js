@@ -14,31 +14,38 @@ authRouter.post("/logout", (req, res) => {
 
 
 authRouter.post("/login", async (req, res) => {
-
     try {
         const { email, password } = req.body;
-
         const user = await User.findOne({ email });
-
 
         if (!user) {
             throw new Error("Invalid Credentials");
         }
+
         const isPasswordMatch = await user.checkPassword(password);
         if (!isPasswordMatch) {
             throw new Error("Invalid Credentials");
         }
-        const token = user.getJWT();
 
+        const token = user.getJWT();
         res.cookie("token", token);
-        res.send(user);
-    }
-    catch (err) {
+        const { _id, firstName, lastName, photoUrl, about, skills } = user;
+        res.json({
+            message: "User logged in successfully",
+            data: {
+                _id,
+                firstName,
+                lastName,
+                photoUrl,
+                about,
+                skills
+            }
+        });
+
+    } catch (err) {
         console.error("Error details:", err.message);
         res.status(400).send("Error in login: " + err.message);
     }
-
-
 });
 
 authRouter.post("/signup", async (req, res) => {
@@ -57,11 +64,11 @@ authRouter.post("/signup", async (req, res) => {
             about,
             skills
         });
-        await newUser.save();       
+        await newUser.save();
         const token = await newUser.getJWT();
         res.cookie("token", token);
-        res.json({ 
-            message: "User created successfully", 
+        res.json({
+            message: "User created successfully",
             data: {
                 firstName: newUser.firstName,
                 lastName: newUser.lastName,

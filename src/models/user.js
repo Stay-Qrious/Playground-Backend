@@ -5,13 +5,13 @@ const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema({
     firstName: { type: String, required: true, minLength: 4, maxLength: 30 },
-    lastName: String,
+    lastName: { type: String, required: true, minLength: 4, maxLength: 30 },
     email: { type: String, required: true, unique: true, trim: true },
     password: { type: String, validator(val) { if (!validator.isStrongPassword(val)) throw new Error("This is not strong Password Baby") } },
     age: { type: Number, min: 18, max: 100 },
     gender: {
         type: String, enum: {
-            values: ["male", "female", "chakka"],
+            values: ["male", "female", "don't want to specify"],
             message: `{VALUE} is not supported`,
         }
     },
@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
     { timestamps: true });
 
 userSchema.methods.getJWT = function () {
-    const token = jwt.sign({ _id: this._id }, "Devtinder@123", { expiresIn: '7d' });
+    const token = jwt.sign({ _id: this._id }, "Playground@123", { expiresIn: '7d' });
     return token;
 }
 
