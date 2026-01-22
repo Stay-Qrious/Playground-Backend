@@ -46,9 +46,6 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
             }
             else return row.fromUserId
         });
-
-
-        console.log(data);
         res.json({ data })
 
     }
