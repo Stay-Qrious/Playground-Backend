@@ -8,6 +8,9 @@ const { profileRouter, passwordRouter } = require("./routes/profile");
 const { requestRouter } = require("./routes/request");
 const userRouter = require("./routes/user");
 const cors = require("cors");
+const http = require("http");
+const server = http.createServer(app);
+const initializeSocket = require("./utils/socket");
 
 
 
@@ -34,10 +37,12 @@ app.use("/", (err, req, res, next) => {
     res.send("matching ka mila hi nhi  !");
 })
 
+initializeSocket(server);
+
 
 connectDB.then(() => {
     console.log("Database connected successfully");
-   app.listen(3000, "0.0.0.0", () => { 
+   server.listen(3000, "0.0.0.0", () => { 
   console.log("Server started at port 3000"); 
 });
 
