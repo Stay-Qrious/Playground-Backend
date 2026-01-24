@@ -65,6 +65,7 @@ authRouter.post("/signup", async (req, res) => {
             skills
         });
         await newUser.save();
+        
         const token = await newUser.getJWT();
         res.cookie("token", token);
         res.json({
