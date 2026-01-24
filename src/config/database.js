@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
     try {
-        mongoose.connect('mongodb+srv://abhishek_tripathi_wk:PlaygroundDbPassword@playgroundcluster.w59s6yz.mongodb.net/?appName=PlaygroundCluster');
+       
+        mongoose.connect(process.env.DbConnectionString);
        
     }
     catch (err) {

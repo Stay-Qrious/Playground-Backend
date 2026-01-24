@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
     { timestamps: true });
 
 userSchema.methods.getJWT = function () {
-    const token = jwt.sign({ _id: this._id }, "Playground@123", { expiresIn: '7d' });
+    const token = jwt.sign({ _id: this._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
     return token;
 }
 
