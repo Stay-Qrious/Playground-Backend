@@ -1,10 +1,18 @@
 const socket = require("socket.io");
 const crypto = require("crypto");
+const { get } = require("http");
 
 
 const getSecretRoomId = (userId, targetUserId) => {
+   
+    const id1 = typeof userId === 'object' ? (userId._id?.toString() || userId.toString()) : userId.toString();
+    const id2 = typeof targetUserId === 'object' ? (targetUserId._id?.toString() || targetUserId.toString()) : targetUserId.toString();
+
+ 
+    const sortedIds = [id1, id2].sort();
+
     return crypto.createHash('sha256')
-        .update([userId, targetUserId].sort().join("_"))
+        .update(sortedIds.join("_"))
         .digest('hex');
 }
 

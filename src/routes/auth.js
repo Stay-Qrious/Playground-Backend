@@ -29,7 +29,7 @@ authRouter.post("/login", async (req, res) => {
 
         const token = user.getJWT();
         res.cookie("token", token);
-        const { _id, firstName, lastName, photoUrl, about, skills } = user;
+        const { _id, firstName, lastName, photoUrl, about, skills,age } = user;
         res.json({
             message: "User logged in successfully",
             data: {
@@ -38,7 +38,8 @@ authRouter.post("/login", async (req, res) => {
                 lastName,
                 photoUrl,
                 about,
-                skills
+                skills,
+                age
             }
         });
 
