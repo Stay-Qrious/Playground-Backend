@@ -1,7 +1,7 @@
 const socket = require("socket.io");
 const crypto = require("crypto");
 
-// 1. Fixed the parameter typo: useruserId -> userId
+
 const getSecretRoomId = (userId, targetUserId) => {
     return crypto.createHash('sha256')
         .update([userId, targetUserId].sort().join("_"))
@@ -14,13 +14,13 @@ const initializeSocket = (server) => {
     });
 
     io.on("connection", (socket) => {
-        // Log connection for your DevTinder troubleshooting
+       
         console.log("Client connected: ", socket.id);
 
         socket.on("joinChat", ({ firstName, userId, targetUserId }) => {
             const roomId = getSecretRoomId(userId, targetUserId);
             socket.join(roomId);
-            // Added space for cleaner logs
+           
             console.log(`User ${firstName} joined room: ${roomId}`);
         });
 
@@ -28,10 +28,10 @@ const initializeSocket = (server) => {
             try {
                 const roomId = getSecretRoomId(userId, targetUserId);
                 
-                // Emit to the hashed room
+               
                 io.to(roomId).emit("messageReceived", {
                     firstName,
-                    userId, // Crucial for chat-start vs chat-end logic
+                    userId, 
                     message,
                 });
                 

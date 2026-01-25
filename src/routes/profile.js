@@ -12,7 +12,7 @@ profileRouter.get("/profile/view", userAuth, async (req, res) => {
             throw new Error("User not found");
         }
 
-        const { _id, firstName, lastName, photoUrl, about, skills } = user;
+        const { _id, firstName, lastName, photoUrl, about, skills,age } = user;
 
         res.json({
             message: "User profile fetched successfully", data: {
@@ -21,7 +21,8 @@ profileRouter.get("/profile/view", userAuth, async (req, res) => {
                 lastName,
                 photoUrl,
                 about,
-                skills
+                skills,
+                age
             }
         });
     } catch (err) {
@@ -39,7 +40,7 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
 
         Object.keys(req.body).forEach((key) => { user[key] = req.body[key] });
         await user.save();
-        const { _id, firstName, lastName, photoUrl, about, skills } = user;
+        const { _id, firstName, lastName, photoUrl, about, skills, age } = user;
         res.json({
             message: `${user.firstName} ,Profile Updated Successfully `, data: {
                 _id,
@@ -47,7 +48,8 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
                 lastName,
                 photoUrl,
                 about,
-                skills
+                skills,
+                age
             }
         });
 
