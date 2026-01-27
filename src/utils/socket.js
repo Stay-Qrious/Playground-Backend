@@ -1,14 +1,15 @@
 const socket = require("socket.io");
 const crypto = require("crypto");
 const { get } = require("http");
+const Chat = require("../models/chat");
 
 
 const getSecretRoomId = (userId, targetUserId) => {
-   
+
     const id1 = typeof userId === 'object' ? (userId._id?.toString() || userId.toString()) : userId.toString();
     const id2 = typeof targetUserId === 'object' ? (targetUserId._id?.toString() || targetUserId.toString()) : targetUserId.toString();
 
- 
+
     const sortedIds = [id1, id2].sort();
 
     return crypto.createHash('sha256')
@@ -22,27 +23,43 @@ const initializeSocket = (server) => {
     });
 
     io.on("connection", (socket) => {
-       
+
         console.log("Client connected: ", socket.id);
 
         socket.on("joinChat", ({ firstName, userId, targetUserId }) => {
             const roomId = getSecretRoomId(userId, targetUserId);
             socket.join(roomId);
-           
+
             console.log(`User ${firstName} joined room: ${roomId}`);
         });
 
-        socket.on("sendMessage", ({ firstName, userId, targetUserId, message }) => {
+        socket.on("sendMessage", async ({ firstName, userId, targetUserId, message }) => {
             try {
                 const roomId = getSecretRoomId(userId, targetUserId);
-                
-               
+                let chat = await Chat.findOne({
+                    participants: { $all: [userId, targetUserId] }
+                });
+
+                if (!chat) {
+                    chat = new Chat({
+                        participants: [userId, targetUserId],
+                        messages: [],
+                    });
+                }
+
+                chat.messages.push({
+                    senderId: userId,
+                    text: message,
+                });
+
+                await chat.save();
+
                 io.to(roomId).emit("messageReceived", {
                     firstName,
-                    userId, 
+                    userId,
                     message,
                 });
-                
+
                 console.log(`[${roomId}] ${firstName}: ${message}`);
             } catch (err) {
                 console.error("Socket error:", err.message);
