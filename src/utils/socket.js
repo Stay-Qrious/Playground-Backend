@@ -2,6 +2,7 @@ const socket = require("socket.io");
 const crypto = require("crypto");
 const { get } = require("http");
 const Chat = require("../models/chat");
+const ConnectionRequest = require("../models/connectionRequest");
 
 
 const getSecretRoomId = (userId, targetUserId) => {
@@ -36,6 +37,18 @@ const initializeSocket = (server) => {
         socket.on("sendMessage", async ({ firstName, userId, targetUserId, message }) => {
             try {
                 const roomId = getSecretRoomId(userId, targetUserId);
+
+                const connectionRequest = await ConnectionRequest.findOne({
+                    $or: [
+                        { fromUserId: userId, toUserId: targetUserId, status: "accepted" },
+                        { fromUserId: targetUserId, toUserId: userId, status: "accepted" }
+                    ]
+                });
+
+                if (!connectionRequest) {
+                    // If they aren't connected in DB, stop the message
+                    return console.error("Users are not connected. Message blocked.");
+                }
                 let chat = await Chat.findOne({
                     participants: { $all: [userId, targetUserId] }
                 });
